@@ -12,7 +12,7 @@ const port = process.env.PORT || 5000;
 app.use(cors({
   origin: ["http://localhost:5174"],
   credentials:true,
-})); 
+}));  
 app.use(express.json());
 app.use(cookieParser());
 
@@ -194,7 +194,7 @@ app.get('/allrecovered',verifyToken,async(req,res)=>{
 
 })
 
-
+ 
 
 
 
@@ -208,9 +208,9 @@ app.get('/allrecovered',verifyToken,async(req,res)=>{
 
 
    
-    await client.connect();
+    // await client.connect();
    
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     
