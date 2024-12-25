@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 
 
 app.use(cors({
-  origin: ["http://localhost:5173"],
+  origin: ["http://localhost:5174"],
   credentials:true,
 })); 
 app.use(express.json());
@@ -167,7 +167,7 @@ async function run() {
       }
     })
 
-    app.delete('/items/:id',async(req,res)=>{
+    app.delete('/items/:id',verifyToken,async(req,res)=>{
       const id = req.params.id;
       const query = {_id:new ObjectId(id)};
       const result = await itemsCollection.deleteOne(query);
