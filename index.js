@@ -1,16 +1,21 @@
+require('dotenv').config()
 const express = require('express');
 const cors = require('cors');
 const app = express();
 var jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-require('dotenv').config()
+
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 
 
 app.use(cors({
-  origin: ["http://localhost:5174"],
+  origin: [
+    "http://localhost:5173",
+    "https://lositfy.web.app",
+    "https://lositfy.firebaseapp.com"
+  ],
   credentials:true,
 }));  
 app.use(express.json());
@@ -72,8 +77,9 @@ async function run() {
       const token = jwt.sign(user,process.env.JWT_SECRET,{expiresIn:'1h'});
       res
       .cookie('token',token,{
-        httpOnly:true,
-        secure:false,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
 
       })
       
@@ -83,8 +89,9 @@ async function run() {
 
     app.post('/logout',(req,res)=>{
       res.clearCookie('token',{
-        httpOnly:true,
-        secure:false,
+        httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       }).send({success:true});
     })
 
