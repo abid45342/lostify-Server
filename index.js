@@ -100,13 +100,14 @@ async function run() {
         const item=req.body;
 
         const result = await itemsCollection.insertOne(item);
+        console.log(req.cookies)
        
         res.send(result);
         console.log(result)
     })
 
 
-    app.get('/allitems' ,async(req,res)=>{
+    app.get('/allitems',async(req,res)=>{
      
       const email = req.query.email;
       let query ={};
@@ -129,6 +130,7 @@ async function run() {
         if(email){
             query = {email:email};
         }
+        
       
         if(req.user.email != req.query.email){
           return res.status(403).send({message:'forbidden access'});
@@ -147,10 +149,11 @@ async function run() {
     });
  
 
-    app.patch('/items/:id',async(req,res)=>{
+    app.patch('/items/:id',verifyToken,async(req,res)=>{
       const id = req.params.id;
       const updateDtata = req.body;
       const query = {_id:new ObjectId(id)};
+      console.log(req.cookies)
       const update = {
         $set:updateDtata
       };
