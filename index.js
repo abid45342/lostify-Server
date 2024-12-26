@@ -12,7 +12,7 @@ const port = process.env.PORT || 5000;
 
 app.use(cors({
   origin: [
-    "http://localhost:5173",
+    "http://localhost:5174",
     "https://lositfy.web.app",
     "https://lositfy.firebaseapp.com"
   ],
@@ -195,12 +195,41 @@ async function run() {
         res.send(result);
         console.log(result)
     })
-app.get('/allrecovered',verifyToken,async(req,res)=>{
+app.get('/allrecovered/email',verifyToken,async(req,res)=>{
     const cursor = recoveredCollection.find({});
     const recovered = await cursor.toArray();
     res.send(recovered);
 
 })
+
+app.get('/allrecovered/:email', verifyToken, async (req, res) => {
+  try {
+      const email = req.params.email; // Get email from URL parameter
+      let query = {}; // Default query (no filter)
+
+      // If email is provided in the query, set it in the query object
+      if (email) {
+          query = { "recoveredBy.email": email }; // Adjusting the query to search within 'recoveredBy.email'
+      }
+
+      // Check if the email in the URL matches the logged-in user's email
+      if (req.user.email !== email) {
+          return res.status(403).send({ message: 'Forbidden access' });
+      }
+
+      // Fetch the items from the database based on the query
+      const cursor = recoveredCollection.find(query);
+      const items = await cursor.toArray();
+      
+      // Send the fetched items as the response
+      res.send(items);
+  } catch (error) {
+      console.error('Error fetching items:', error);
+      res.status(500).send({ error: 'An error occurred while fetching items.' });
+  }
+});
+
+
 
  
 
